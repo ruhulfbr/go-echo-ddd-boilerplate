@@ -1,0 +1,59 @@
+services:
+  bkash_ekyc_mw:
+    container_name: bkash_ekyc_mw
+    build: .
+    ports:
+      - ${EXPOSE_PORT}:${PORT}
+    restart: on-failure
+    volumes:
+      - ./:/app/
+    depends_on:
+      - bkash_ekyc_mw_mysql
+    env_file:
+      - .env
+    environment:
+      - DB_CONNECTION=${DB_USER}:${DB_PASSWORD}@tcp(bkash_ekyc_mw_mysql:${DB_PORT})/${DB_NAME}
+      - WAIT_HOSTS=${DB_HOST}:${DB_PORT}
+      - WAIT_BEFORE_HOSTS=15
+      - WAIT_SLEEP_INTERVAL=3
+    networks:
+      - bkash_ekyc_mw_network
+
+  bkash_ekyc_mw_mysql:
+    image: mysql:8.0
+    container_name: bkash_ekyc_mw_db
+    ports:
+      - ${EXPOSE_DB_PORT}:${DB_PORT}
+    environment:
+      - MYSQL_ROOT_HOST=${DB_HOST}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - bkash_ekyc_mw_database:/var/lib/mysql
+    networks:
+      - bkash_ekyc_mw_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: bkash_ekyc_mw_phpmyadmin
+    restart: always
+    ports:
+      - ${EXPOSE_PHPMYADMIN_PORT:-8082}:80
+    environment:
+      - PMA_HOST=bkash_ekyc_mw_mysql
+      - PMA_USER=${DB_USER}
+      - PMA_PASSWORD=${DB_PASSWORD}
+      - UPLOAD_LIMIT=128M
+    depends_on:
+      - bkash_ekyc_mw_mysql
+    networks:
+      - bkash_ekyc_mw_network
+
+volumes:
+  bkash_ekyc_mw_database:
+
+networks:
+  bkash_ekyc_mw_network:
+    driver: bridge
