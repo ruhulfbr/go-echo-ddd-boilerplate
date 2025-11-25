@@ -5,9 +5,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/models"
-
 	"github.com/coreos/go-oidc/v3/oidc"
+	errors2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/errors"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/user"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/models"
 )
 
 type Service struct {
@@ -17,13 +18,13 @@ type Service struct {
 }
 
 type userService interface {
-	CreateUserAndOAuthProvider(ctx context.Context, user *models.User, oAuthProvider *models.OAuthProviders) error
-	GetUserByEmail(ctx context.Context, email string) (models.User, error)
+	CreateUserAndOAuthProvider(ctx context.Context, user *user.User, oAuthProvider *models.OAuthProviders) error
+	GetUserByEmail(ctx context.Context, email string) (user.User, error)
 }
 
 type tokenService interface {
-	CreateAccessToken(ctx context.Context, user *models.User) (string, int64, error)
-	CreateRefreshToken(ctx context.Context, user *models.User) (string, error)
+	CreateAccessToken(ctx context.Context, user *user.User) (string, int64, error)
+	CreateRefreshToken(ctx context.Context, user *user.User) (string, error)
 }
 
 func NewService(idTokenVerifier *oidc.IDTokenVerifier, tokenService tokenService, userService userService) *Service {
@@ -52,11 +53,11 @@ func (s Service) GoogleOAuth(ctx context.Context, token string) (accessToken, re
 
 	user, err := s.userService.GetUserByEmail(ctx, claims.Email)
 	if err != nil {
-		if !errors.Is(err, models.ErrUserNotFound) {
+		if !errors.Is(err, errors2.ErrUserNotFound) {
 			return "", "", 0, fmt.Errorf("get user: %w", err)
 		}
 
-		user = models.User{
+		user = user.User{
 			Email: claims.Email,
 			Name:  claims.Name,
 		}

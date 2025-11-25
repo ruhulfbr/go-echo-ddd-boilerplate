@@ -1,12 +1,12 @@
-package repositories
+package post
 
 import (
 	"context"
 	"errors"
 	"fmt"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/models"
-
+	errors2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/errors"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/post"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +18,7 @@ func NewPostRepository(db *gorm.DB) *PostRepository {
 	return &PostRepository{db: db}
 }
 
-func (r *PostRepository) Create(ctx context.Context, post *models.Post) error {
+func (r *PostRepository) Create(ctx context.Context, post *post.Post) error {
 	if err := r.db.WithContext(ctx).Create(post).Error; err != nil {
 		return fmt.Errorf("execute insert post query: %w", err)
 	}
@@ -26,8 +26,8 @@ func (r *PostRepository) Create(ctx context.Context, post *models.Post) error {
 	return nil
 }
 
-func (r *PostRepository) GetPosts(ctx context.Context) ([]models.Post, error) {
-	var posts []models.Post
+func (r *PostRepository) GetPosts(ctx context.Context) ([]post.Post, error) {
+	var posts []post.Post
 	if err := r.db.WithContext(ctx).Find(&posts).Error; err != nil {
 		return nil, fmt.Errorf("execute select posts query: %w", err)
 	}
@@ -35,19 +35,19 @@ func (r *PostRepository) GetPosts(ctx context.Context) ([]models.Post, error) {
 	return posts, nil
 }
 
-func (r *PostRepository) GetPost(ctx context.Context, id uint) (models.Post, error) {
-	var post models.Post
+func (r *PostRepository) GetPost(ctx context.Context, id uint) (post.Post, error) {
+	var post post.Post
 	err := r.db.WithContext(ctx).Where("id = ?", id).Take(&post).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return models.Post{}, errors.Join(models.ErrPostNotFound, err)
+		return post.Post{}, errors.Join(errors2.ErrPostNotFound, err)
 	} else if err != nil {
-		return models.Post{}, fmt.Errorf("execute select post by id query: %w", err)
+		return post.Post{}, fmt.Errorf("execute select post by id query: %w", err)
 	}
 
 	return post, nil
 }
 
-func (r *PostRepository) Update(ctx context.Context, post *models.Post) error {
+func (r *PostRepository) Update(ctx context.Context, post *post.Post) error {
 	if err := r.db.WithContext(ctx).Save(post).Error; err != nil {
 		return fmt.Errorf("execute update post query: %w", err)
 	}
@@ -55,7 +55,7 @@ func (r *PostRepository) Update(ctx context.Context, post *models.Post) error {
 	return nil
 }
 
-func (r *PostRepository) Delete(ctx context.Context, post *models.Post) error {
+func (r *PostRepository) Delete(ctx context.Context, post *post.Post) error {
 	if err := r.db.WithContext(ctx).Delete(post).Error; err != nil {
 		return fmt.Errorf("execute delete post query: %w", err)
 	}

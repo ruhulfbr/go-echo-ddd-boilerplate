@@ -4,10 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/requests"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/responses"
-
 	"github.com/labstack/echo/v4"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/requests"
+	responses2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/responses"
 )
 
 type userAuthenticator interface {
@@ -26,18 +25,18 @@ func (oa *OAuthHandler) GoogleOAuth(c echo.Context) error {
 	var oAuthRequest requests.OAuthRequest
 
 	if err := c.Bind(&oAuthRequest); err != nil {
-		return responses.ErrorResponse(c, http.StatusBadRequest, "Failed to bind request")
+		return responses2.ErrorResponse(c, http.StatusBadRequest, "Failed to bind request")
 	}
 
 	if err := oAuthRequest.Validate(); err != nil {
-		return responses.ErrorResponse(c, http.StatusBadRequest, "Required fields are empty or invalid")
+		return responses2.ErrorResponse(c, http.StatusBadRequest, "Required fields are empty or invalid")
 	}
 
 	accessToken, refreshToken, exp, err := oa.userService.GoogleOAuth(c.Request().Context(), oAuthRequest.Token)
 	if err != nil {
-		return responses.ErrorResponse(c, http.StatusBadRequest, "Failed to authenticate with Google: "+err.Error())
+		return responses2.ErrorResponse(c, http.StatusBadRequest, "Failed to authenticate with Google: "+err.Error())
 	}
 
-	res := responses.NewLoginResponse(accessToken, refreshToken, exp)
-	return responses.Response(c, http.StatusOK, res)
+	res := responses2.NewLoginResponse(accessToken, refreshToken, exp)
+	return responses2.Response(c, http.StatusOK, res)
 }

@@ -1,11 +1,10 @@
 package routes
 
 import (
+	"github.com/labstack/echo/v4"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/handlers"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/middleware"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/slogx"
-
-	"github.com/labstack/echo/v4"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/logger/slogx"
 )
 
 type Handlers struct {

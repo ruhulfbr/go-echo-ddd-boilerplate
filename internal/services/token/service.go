@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/models"
-
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/user"
 )
 
 type JwtCustomClaims struct {
@@ -45,7 +44,7 @@ func NewService(
 	}
 }
 
-func (s *Service) CreateAccessToken(_ context.Context, user *models.User) (accessToken string, expires int64, err error) {
+func (s *Service) CreateAccessToken(_ context.Context, user *user.User) (accessToken string, expires int64, err error) {
 	expiresAt := s.now().Add(s.accessTokenDuration)
 
 	claims := &JwtCustomClaims{
@@ -66,7 +65,7 @@ func (s *Service) CreateAccessToken(_ context.Context, user *models.User) (acces
 	return accessToken, expiresAt.Unix(), nil
 }
 
-func (s *Service) CreateRefreshToken(_ context.Context, user *models.User) (string, error) {
+func (s *Service) CreateRefreshToken(_ context.Context, user *user.User) (string, error) {
 	expiresAt := s.now().Add(s.refreshTokenDuration)
 
 	claims := &JwtCustomRefreshClaims{

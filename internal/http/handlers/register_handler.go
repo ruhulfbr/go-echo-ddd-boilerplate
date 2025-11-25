@@ -5,15 +5,15 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/models"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/requests"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/responses"
-
 	"github.com/labstack/echo/v4"
+	errors2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/errors"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/user"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/requests"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/responses"
 )
 
 type userRegisterer interface {
-	GetUserByEmail(ctx context.Context, email string) (models.User, error)
+	GetUserByEmail(ctx context.Context, email string) (user.User, error)
 	Register(ctx context.Context, request *requests.RegisterRequest) error
 }
 
@@ -38,7 +38,7 @@ func (h *RegisterHandler) Register(c echo.Context) error {
 	_, err := h.userRegisterer.GetUserByEmail(c.Request().Context(), registerRequest.Email)
 	if err == nil {
 		return responses.ErrorResponse(c, http.StatusConflict, "User already exists")
-	} else if !errors.Is(err, models.ErrUserNotFound) {
+	} else if !errors.Is(err, errors2.ErrUserNotFound) {
 		return responses.ErrorResponse(c, http.StatusInternalServerError, "Failed to check if user exists")
 	}
 

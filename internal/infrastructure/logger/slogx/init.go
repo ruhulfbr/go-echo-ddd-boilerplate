@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/config"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/config"
 )
 
 func Init(config config.LogConfig) (err error) {
@@ -37,7 +37,7 @@ func Init(config config.LogConfig) (err error) {
 	traceHandler := newTraceHandler(jsonHandler)
 
 	logger := slog.New(traceHandler).
-		With("application", config.Application).
+		With("services", config.Application).
 		With("hostname", hostname)
 
 	slog.SetDefault(logger)

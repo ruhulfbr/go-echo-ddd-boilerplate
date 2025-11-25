@@ -9,19 +9,6 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/config"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/conn"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/handlers"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/routes"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/repositories"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/auth"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/oauth"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/post"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/token"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/user"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/slogx"
-
 	"github.com/caarlos0/env/v11"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/golang-jwt/jwt/v5"
@@ -29,6 +16,19 @@ import (
 	"github.com/joho/godotenv"
 	echojwt "github.com/labstack/echo-jwt/v4"
 	"github.com/labstack/echo/v4"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/config"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/handlers"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/routes"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/database"
+	slogx2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/logger/slogx"
+	post2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/repositories/post"
+	repositories2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/repositories/user"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/auth"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/oauth"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/post"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/token"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/user"
 )
 
 const shutdownTimeout = 20 * time.Second
@@ -50,21 +50,21 @@ func run() error {
 		return fmt.Errorf("parse env: %w", err)
 	}
 
-	if err := slogx.Init(cfg.Logger); err != nil {
+	if err := slogx2.Init(cfg.Logger); err != nil {
 		return fmt.Errorf("init logger: %w", err)
 	}
 
-	traceStarter := slogx.NewTraceStarter(uuid.NewV7)
+	traceStarter := slogx2.NewTraceStarter(uuid.NewV7)
 
-	gormDB, err := conn.NewGormDB(cfg.DB)
+	gormDB, err := database.NewGormDB(cfg.DB)
 	if err != nil {
 		return fmt.Errorf("new conn connection: %w", err)
 	}
 
-	userRepository := repositories.NewUserRepository(gormDB)
+	userRepository := repositories2.NewUserRepository(gormDB)
 	userService := user.NewService(userRepository)
 
-	postRepository := repositories.NewPostRepository(gormDB)
+	postRepository := post2.NewPostRepository(gormDB)
 	postService := post.NewService(postRepository)
 
 	provider, err := oidc.NewProvider(context.Background(), "https://accounts.google.com")
