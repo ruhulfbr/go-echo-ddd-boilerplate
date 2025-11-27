@@ -7,8 +7,8 @@ import (
 )
 
 type Repository interface {
-	Create(ctx context.Context, user *User) error
-	GetByID(ctx context.Context, id uint) (User, error)
-	GetUserByEmail(ctx context.Context, email string) (User, error)
-	CreateUserAndOAuthProvider(ctx context.Context, user *User, oauthProvider *models.OAuthProviders) error
+	Create(ctx context.Context, user *models.User) error
+	GetByID(ctx context.Context, id uint) (models.User, error)
+	GetUserByEmail(ctx context.Context, email string) (models.User, error)
+	CreateUserAndOAuthProvider(ctx context.Context, user *models.User, oauthProvider *models.OAuthProviders) error
 }

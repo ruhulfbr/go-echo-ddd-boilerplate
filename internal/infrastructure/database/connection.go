@@ -3,15 +3,15 @@ package database
 import (
 	"fmt"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/config"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/database/conn"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/config"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/logger"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 func NewGormDB(cfg config.DBConfig) (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.Open(dsn(cfg)), &gorm.Config{
-		Logger: conn.newLoggerAdapter(),
+		Logger: logger.NewLoggerAdapter(),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("open conn connection: %w", err)

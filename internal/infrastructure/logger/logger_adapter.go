@@ -12,7 +12,7 @@ var _ logger.Interface = (*LoggerAdapter)(nil)
 
 type LoggerAdapter struct{}
 
-func newLoggerAdapter() *LoggerAdapter {
+func NewLoggerAdapter() *LoggerAdapter {
 	return &LoggerAdapter{}
 }
 

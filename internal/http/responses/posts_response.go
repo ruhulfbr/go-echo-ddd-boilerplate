@@ -1,7 +1,7 @@
 package responses
 
 import (
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/post"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/models"
 )
 
 type PostResponse struct {
@@ -11,7 +11,7 @@ type PostResponse struct {
 	ID       uint   `json:"id" example:"1"`
 }
 
-func NewPostResponse(posts []post.Post) *[]PostResponse {
+func NewPostResponse(posts []models.Post) *[]PostResponse {
 	postResponse := make([]PostResponse, 0)
 
 	for i := range posts {

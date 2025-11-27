@@ -1,26 +1,21 @@
 package handlers
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	errors2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/errors"
+	appErrors "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/errors"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/requests"
 	apiResponses "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/responses"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/auth"
 )
 
-type authService interface {
-	GenerateToken(ctx context.Context, request *requests.LoginRequest) (*apiResponses.LoginResponse, error)
-	RefreshToken(ctx context.Context, request *requests.RefreshRequest) (*apiResponses.LoginResponse, error)
-}
-
 type AuthHandler struct {
-	authService authService
+	authService auth.AuthServiceInterface
 }
 
-func NewAuthHandler(authService authService) *AuthHandler {
+func NewAuthHandler(authService auth.AuthServiceInterface) *AuthHandler {
 	return &AuthHandler{authService: authService}
 }
 
@@ -31,12 +26,12 @@ func (h *AuthHandler) Login(c echo.Context) error {
 	}
 
 	if err := request.Validate(); err != nil {
-		return apiResponses.ErrorResponse(c, http.StatusBadRequest, "Required fields are empty or not valid")
+		return err
 	}
 
 	response, err := h.authService.GenerateToken(c.Request().Context(), &request)
 	switch {
-	case errors.Is(err, errors2.ErrUserNotFound), errors.Is(err, errors2.ErrInvalidPassword):
+	case errors.Is(err, appErrors.ErrUserNotFound), errors.Is(err, appErrors.ErrInvalidPassword):
 		return apiResponses.ErrorResponse(c, http.StatusUnauthorized, "Invalid credentials")
 	case err != nil:
 		return apiResponses.ErrorResponse(c, http.StatusInternalServerError, "Internal Server Error")
@@ -53,7 +48,7 @@ func (h *AuthHandler) RefreshToken(c echo.Context) error {
 
 	response, err := h.authService.RefreshToken(c.Request().Context(), &request)
 	switch {
-	case errors.Is(err, errors2.ErrUserNotFound), errors.Is(err, errors2.ErrInvalidAuthToken):
+	case errors.Is(err, appErrors.ErrUserNotFound), errors.Is(err, appErrors.ErrInvalidAuthToken):
 		return apiResponses.ErrorResponse(c, http.StatusUnauthorized, "Unauthorized")
 	case err != nil:
 		return apiResponses.ErrorResponse(c, http.StatusInternalServerError, "Internal Server Error")

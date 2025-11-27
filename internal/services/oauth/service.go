@@ -9,25 +9,16 @@ import (
 	errors2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/errors"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/user"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/models"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/services/token"
 )
 
 type Service struct {
 	idTokenVerifier *oidc.IDTokenVerifier
-	tokenService    tokenService
-	userService     userService
+	tokenService    token.TokenServiceInterface
+	userService     user.Service
 }
 
-type userService interface {
-	CreateUserAndOAuthProvider(ctx context.Context, user *user.User, oAuthProvider *models.OAuthProviders) error
-	GetUserByEmail(ctx context.Context, email string) (user.User, error)
-}
-
-type tokenService interface {
-	CreateAccessToken(ctx context.Context, user *user.User) (string, int64, error)
-	CreateRefreshToken(ctx context.Context, user *user.User) (string, error)
-}
-
-func NewService(idTokenVerifier *oidc.IDTokenVerifier, tokenService tokenService, userService userService) *Service {
+func NewService(idTokenVerifier *oidc.IDTokenVerifier, tokenService token.TokenServiceInterface, userService user.Service) *Service {
 	return &Service{idTokenVerifier: idTokenVerifier, tokenService: tokenService, userService: userService}
 }
 
@@ -57,7 +48,7 @@ func (s Service) GoogleOAuth(ctx context.Context, token string) (accessToken, re
 			return "", "", 0, fmt.Errorf("get user: %w", err)
 		}
 
-		user = user.User{
+		user = models.User{
 			Email: claims.Email,
 			Name:  claims.Name,
 		}

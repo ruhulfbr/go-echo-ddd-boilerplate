@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/config"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/config"
 )
 
 func Init(config config.LogConfig) (err error) {

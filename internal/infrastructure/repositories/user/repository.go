@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	errors2 "github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/common/errors"
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/user"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/models"
 	"gorm.io/gorm"
 )
@@ -19,7 +18,7 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) Create(ctx context.Context, user *user.User) error {
+func (r *UserRepository) Create(ctx context.Context, user *models.User) error {
 	if err := r.db.WithContext(ctx).Create(user).Error; err != nil {
 		return fmt.Errorf("execute insert user query: %w", err)
 	}
@@ -27,31 +26,31 @@ func (r *UserRepository) Create(ctx context.Context, user *user.User) error {
 	return nil
 }
 
-func (r *UserRepository) GetByID(ctx context.Context, id uint) (user.User, error) {
-	var user user.User
+func (r *UserRepository) GetByID(ctx context.Context, id uint) (models.User, error) {
+	var user models.User
 	err := r.db.WithContext(ctx).Where("id = ?", id).Take(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return user.User{}, errors.Join(errors2.ErrUserNotFound, err)
+		return models.User{}, errors.Join(errors2.ErrUserNotFound, err)
 	} else if err != nil {
-		return user.User{}, fmt.Errorf("execute select user by id query: %w", err)
+		return models.User{}, fmt.Errorf("execute select user by id query: %w", err)
 	}
 
 	return user, nil
 }
 
-func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (user.User, error) {
-	var user user.User
+func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (models.User, error) {
+	var user models.User
 	err := r.db.WithContext(ctx).Where("email = ?", email).Take(&user).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return user.User{}, errors.Join(errors2.ErrUserNotFound, err)
+		return models.User{}, errors.Join(errors2.ErrUserNotFound, err)
 	} else if err != nil {
-		return user.User{}, fmt.Errorf("execute select user by email query: %w", err)
+		return models.User{}, fmt.Errorf("execute select user by email query: %w", err)
 	}
 
 	return user, nil
 }
 
-func (r *UserRepository) CreateUserAndOAuthProvider(ctx context.Context, user *user.User, oAuthProvider *models.OAuthProviders) error {
+func (r *UserRepository) CreateUserAndOAuthProvider(ctx context.Context, user *models.User, oAuthProvider *models.OAuthProviders) error {
 	tx := r.db.Begin()
 
 	committed := false

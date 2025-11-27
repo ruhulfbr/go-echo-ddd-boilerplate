@@ -27,7 +27,8 @@ type LoginRequest struct {
 
 type RegisterRequest struct {
 	BasicAuth
-	Name string `json:"name" validate:"required" example:"John Doe"`
+	Name  string `json:"name"`
+	Email string `json:"email" validate:"required,email"`
 }
 
 func (rr RegisterRequest) Validate() error {
@@ -37,7 +38,8 @@ func (rr RegisterRequest) Validate() error {
 	}
 
 	return validation.ValidateStruct(&rr,
-		validation.Field(&rr.Name, validation.Required),
+		validation.Field(&rr.Name, validation.Required.Error("Name is required")),
+		validation.Field(&rr.Email, validation.Required.Error("Email field is required"), is.Email.Error("Please enter a valid email address")),
 	)
 }
 

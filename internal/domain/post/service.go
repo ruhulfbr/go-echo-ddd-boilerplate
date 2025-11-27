@@ -4,12 +4,13 @@ import (
 	"context"
 
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/requests"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/models"
 )
 
 type Service interface {
-	Create(ctx context.Context, post *Post) error
-	GetPosts(ctx context.Context) ([]Post, error)
-	GetPost(ctx context.Context, id uint) (Post, error)
-	Update(ctx context.Context, post *Post, updatePostRequest requests.UpdatePostRequest) error
-	Delete(ctx context.Context, post *Post) error
+	Create(ctx context.Context, post *models.Post) error
+	GetPosts(ctx context.Context) ([]models.Post, error)
+	GetPost(ctx context.Context, id uint) (models.Post, error)
+	Update(ctx context.Context, post *models.Post, updatePostRequest requests.UpdatePostRequest) error
+	Delete(ctx context.Context, post *models.Post) error
 }

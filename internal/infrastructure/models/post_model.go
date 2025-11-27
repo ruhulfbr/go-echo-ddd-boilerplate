@@ -1,7 +1,6 @@
-package post
+package models
 
 import (
-	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/user"
 	"gorm.io/gorm"
 )
 
@@ -10,5 +9,5 @@ type Post struct {
 	Title   string `json:"title" gorm:"type:text"`
 	Content string `json:"content" gorm:"type:text"`
 	UserID  uint
-	User    user.User `gorm:"foreignkey:UserID"`
+	User    User `gorm:"foreignkey:UserID"`
 }

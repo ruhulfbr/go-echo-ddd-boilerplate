@@ -14,23 +14,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type userService interface {
-	GetByID(ctx context.Context, id uint) (user.User, error)
-	GetUserByEmail(ctx context.Context, email string) (user.User, error)
-}
-
-type tokenService interface {
-	ParseRefreshToken(ctx context.Context, token string) (*token.JwtCustomRefreshClaims, error)
-	CreateAccessToken(ctx context.Context, user *user.User) (string, int64, error)
-	CreateRefreshToken(ctx context.Context, user *user.User) (string, error)
-}
-
 type Service struct {
-	userService  userService
-	tokenService tokenService
+	userService  user.Service
+	tokenService token.TokenServiceInterface
 }
 
-func NewService(userService userService, tokenService tokenService) *Service {
+func NewService(userService user.Service, tokenService token.TokenServiceInterface) *Service {
 	return &Service{
 		userService:  userService,
 		tokenService: tokenService,
