@@ -11,7 +11,6 @@ There is a useful set of tools that described below. Feel free to contribute!
 - CRUD API for posts
 - Migrations
 - Request validation
-- Swagger docs
 - Environment configuration
 - Docker development environment
 
@@ -31,16 +30,12 @@ There is a useful set of tools that described below. Feel free to contribute!
 2. Run your application using the command in the terminal:
 
    `docker-compose up`
-3. Browse to {HOST}:{PORT}/swagger/index.html. You will see Swagger 2.0 API documents.
-4. Using the API documentation, make requests to register a user (if necessary) and login.
-5. After the successful login, copy a token from the response, then click "Authorize" and in a popup that opened, enter
-   the value for "apiKey" in a form:
+3. Make requests to register a user (if necessary) and login.
+4. After the successful login, copy a token from the response, use as "apiKey" in a form:
    "Bearer {token}". For example:
-
    Bearer
    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1ODk0NDA5NjYsIm9yaWdfaWF0IjoxNTg5NDM5OTY2LCJ1c2VyX2lkIjo1fQ.f8dSG3NxFLHwyA5-XIYALT5GtXm4eiH-motqtqAUBOI
 
-Then, click "Authorize" and close the popup.
 Now, you are able to make requests which require authentication.
 
 ## Directories
