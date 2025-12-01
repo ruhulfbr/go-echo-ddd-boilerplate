@@ -5,9 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nix-united/golang-echo-boilerplate/internal/models"
-
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/models"
 )
 
 type JwtCustomClaims struct {

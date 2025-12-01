@@ -1,4 +1,4 @@
-module github.com/nix-united/golang-echo-boilerplate
+module github.com/ruhulfbr/go-echo-ddd-boilerplate
 
 go 1.25.1
 
@@ -12,13 +12,6 @@ require (
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo-jwt/v4 v4.3.1
 	github.com/labstack/echo/v4 v4.13.3
-	github.com/pressly/goose/v3 v3.24.3
-	github.com/stretchr/testify v1.10.0
-	github.com/swaggo/echo-swagger v1.4.1
-	github.com/swaggo/swag v1.16.4
-	github.com/testcontainers/testcontainers-go v0.37.0
-	github.com/testcontainers/testcontainers-go/modules/mysql v0.37.0
-	go.uber.org/mock v0.5.2
 	golang.org/x/crypto v0.38.0
 	gorm.io/driver/mysql v1.5.2
 	gorm.io/gorm v1.25.5

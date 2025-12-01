@@ -4,25 +4,16 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/nix-united/golang-echo-boilerplate/internal/models"
-	"github.com/nix-united/golang-echo-boilerplate/internal/requests"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/post"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/requests"
+	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/models"
 )
 
-//go:generate go tool mockgen -source=$GOFILE -destination=service_mock_test.go -package=${GOPACKAGE}_test -typed=true
-
-type postRepository interface {
-	Create(ctx context.Context, post *models.Post) error
-	GetPosts(ctx context.Context) ([]models.Post, error)
-	GetPost(ctx context.Context, id uint) (models.Post, error)
-	Update(ctx context.Context, post *models.Post) error
-	Delete(ctx context.Context, post *models.Post) error
-}
-
 type Service struct {
-	postRepository postRepository
+	postRepository post.Repository
 }
 
-func NewService(postRepository postRepository) *Service {
+func NewService(postRepository post.Repository) *Service {
 	return &Service{postRepository: postRepository}
 }
 
