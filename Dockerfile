@@ -31,6 +31,6 @@ CMD ["sh", "-c", "\
     CompileDaemon \
       -log-prefix=false \
       -color=true \
-      -build=\"go build -o main ./cmd/service\" \
+      -build=\"go build -o main ./cmd\" \
       -command=\"./main\" \
 "]

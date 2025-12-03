@@ -1,4 +1,4 @@
-package wiring
+package repositories
 
 import (
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/domain/post"

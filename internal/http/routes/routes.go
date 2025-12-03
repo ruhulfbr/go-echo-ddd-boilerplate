@@ -1,21 +1,20 @@
 package routes
 
 import (
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/config"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/handlers"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/http/middleware"
 	"github.com/ruhulfbr/go-echo-ddd-boilerplate/internal/infrastructure/logger/slogx"
+	"gorm.io/gorm"
 )
 
-type Handlers struct {
-	PostHandler     *handlers.PostHandlers
-	AuthHandler     *handlers.AuthHandler
-	OAuthHandler    *handlers.OAuthHandler
-	RegisterHandler *handlers.RegisterHandler
-}
+func ConfigureRoutes(engine *echo.Echo, cfg *config.Config, gormDB *gorm.DB) error {
+	handlers := handlers.InitHandlers(cfg, gormDB)
 
-func ConfigureRoutes(tracer *slogx.TraceStarter, engine *echo.Echo, cfg *config.Config, handlers Handlers) error {
+	tracer := slogx.NewTraceStarter(uuid.NewV7)
+
 	engine.HTTPErrorHandler = middleware.EchoHTTPErrorHandler
 	engine.Use(middleware.NewRequestLogger(tracer))
 
